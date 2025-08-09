@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Productos - Mini Supermercado</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%);
+            min-height: 100vh;
+            color: #2c3e50;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo::before {
+            content: "🛒";
+            font-size: 2.5rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn::before {
+            content: "←";
+            font-size: 1.2rem;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .form-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            border-left: 5px solid #27ae60;
+        }
+
+        .form-title {
+            color: #27ae60;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-title::before {
+            content: "📦";
+            font-size: 1.5rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        input, select {
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #27ae60;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 200px;
+            justify-content: center;
+        }
+
+        .submit-btn::before {
+            content: "➕";
+            font-size: 1.2rem;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(39, 174, 96, 0.3);
+        }
+
+        .submit-btn.editing {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+        }
+
+        .submit-btn.editing::before {
+            content: "✏️";
+        }
+
+        .table-section {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            overflow: hidden;
+            border-left: 5px solid #27ae60;
+        }
+
+        .table-header {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .table-header::before {
+            content: "📊";
+            font-size: 1.5rem;
+        }
+
+        .table-header h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 15px 20px;
+            text-align: left;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+            transform: scale(1.01);
+        }
+
+        .price {
+            font-weight: 600;
+            color: #27ae60;
+            font-size: 1.1rem;
+        }
+
+        .stock {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .stock.low {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .stock.medium {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+
+        .stock.high {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-edit, .btn-delete {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-edit {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-edit::before {
+            content: "✏️";
+        }
+
+        .btn-edit:hover {
+            background: #2980b9;
+            transform: translateY(-1px);
+        }
+
+        .btn-delete {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-delete::before {
+            content: "🗑️";
+        }
+
+        .btn-delete:hover {
+            background: #c0392b;
+            transform: translateY(-1px);
+        }
+
+        .category-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            background: #ecf0f1;
+            color: #2c3e50;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #7f8c8d;
+        }
+
+        .empty-state::before {
+            content: "📦";
+            font-size: 4rem;
+            display: block;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 0 15px;
+            }
+
+            table {
+                font-size: 0.9rem;
+            }
+
+            th, td {
+                padding: 10px 8px;
+            }
+
+            .actions {
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">
+                <h1>Gestión de Productos</h1>
+            </div>
+            <a href="index.html" class="back-btn">Regresar al Inicio</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="form-section">
+            <div class="form-title">Agregar Nuevo Producto</div>
+            <form id="productoForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="nombre">Nombre del producto:</label>
+                        <input type="text" id="nombre" name="nombre" required placeholder="Ej: Leche Entera 1L">
+                    </div>
+                    <div class="form-group">
+                        <label for="categoria">Categoría:</label>
+                        <input type="text" id="categoria" name="categoria" required placeholder="Ej: Lácteos">
+                    </div>
+                    <div class="form-group">
+                        <label for="precio">Precio:</label>
+                        <input type="number" id="precio" name="precio" step="0.01" min="0" required placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label for="stock">Stock:</label>
+                        <input type="number" id="stock" name="stock" min="0" required placeholder="0">
+                    </div>
+                </div>
+                <button type="submit" class="submit-btn">Agregar Producto</button>
+            </form>
+        </div>
+
+        <div class="table-section">
+            <div class="table-header">
+                <h2>Inventario de Productos</h2>
+            </div>
+            <table id="productosTabla">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Categoría</th>
+                        <th>Precio</th>
+                        <th>Stock</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Productos aparecerán aquí -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('productoForm');
+        const tabla = document.getElementById('productosTabla').querySelector('tbody');
+        const submitBtn = form.querySelector('.submit-btn');
+
+        // 16 productos de ejemplo
+        const productosIniciales = [
+            { nombre: "Leche Entera 1L", categoria: "Lácteos", precio: 30.25, stock: 30 },
+            { nombre: "Pan Integral", categoria: "Panadería", precio: 12.95, stock: 20 },
+            { nombre: "Huevos Docena", categoria: "Huevos", precio: 45.10, stock: 15 },
+            { nombre: "Queso Fresco", categoria: "Lácteos", precio: 30.50, stock: 12 },
+            { nombre: "Arroz 1kg", categoria: "Granos", precio: 21.10, stock: 40 },
+            { nombre: "Azúcar 1kg", categoria: "Granos", precio: 41.00, stock: 25 },
+            { nombre: "Aceite 900ml", categoria: "Aceites", precio: 28.00, stock: 18 },
+            { nombre: "Sal 500g", categoria: "Condimentos", precio: 6.00, stock: 35 },
+            { nombre: "Pollo Entero", categoria: "Carnes", precio: 50.00, stock: 8 },
+            { nombre: "Manzanas 1kg", categoria: "Frutas", precio: 22.00, stock: 22 },
+            { nombre: "Tomates 1kg", categoria: "Verduras", precio: 18.00, stock: 28 },
+            { nombre: "Pasta 500g", categoria: "Granos", precio: 10.30, stock: 33 },
+            { nombre: "Jabón Barra", categoria: "Limpieza", precio: 20.75, stock: 50 },
+            { nombre: "Jabón Líquido 1L", categoria: "Limpieza", precio: 69.00, stock: 14 },
+            { nombre: "Cereal 300g", categoria: "Desayuno", precio: 24.40, stock: 19 },
+            { nombre: "Yogur 200ml", categoria: "Lácteos", precio: 45.90, stock: 27 }
+        ];
+
+        // Cargar productos desde localStorage o inicializar
+        let productos = [];
+        if (localStorage.getItem('productos')) {
+            productos = JSON.parse(localStorage.getItem('productos'));
+        } else {
+            productos = productosIniciales;
+            localStorage.setItem('productos', JSON.stringify(productos));
+        }
+
+        function guardarProductos() {
+            localStorage.setItem('productos', JSON.stringify(productos));
+        }
+
+        function getStockClass(stock) {
+            stock = Number(stock);
+            if (stock <= 10) return 'low';
+            if (stock <= 50) return 'medium';
+            return 'high';
+        }
+
+        function renderTabla() {
+            if (productos.length === 0) {
+                tabla.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="empty-state">
+                            No hay productos registrados<br>
+                            <small>Agrega tu primer producto usando el formulario de arriba</small>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tabla.innerHTML = '';
+            productos.forEach((prod, idx) => {
+                const fila = document.createElement('tr');
+                fila.innerHTML = `
+                    <td><strong>${prod.nombre}</strong></td>
+                    <td><span class="category-tag">${prod.categoria}</span></td>
+                    <td><span class="price">L${parseFloat(prod.precio).toFixed(2)}</span></td>
+                    <td><span class="stock ${getStockClass(prod.stock)}">${prod.stock} unidades</span></td>
+                    <td class="actions">
+                        <button class="btn-edit" onclick="editarProducto(${idx})">Editar</button>
+                        <button class="btn-delete" onclick="eliminarProducto(${idx})">Eliminar</button>
+                    </td>
+                `;
+                tabla.appendChild(fila);
+            });
+        }
+
+        form.onsubmit = function(e) {
+            e.preventDefault();
+            const nombre = form.nombre.value.trim();
+            const categoria = form.categoria.value.trim();
+            const precio = form.precio.value;
+            const stock = form.stock.value;
+
+            if (form.dataset.editando) {
+                const idx = parseInt(form.dataset.editando, 10);
+                productos[idx] = { nombre, categoria, precio, stock };
+                delete form.dataset.editando;
+                submitBtn.textContent = 'Agregar Producto';
+                submitBtn.className = 'submit-btn';
+            } else {
+                productos.push({ nombre, categoria, precio, stock });
+            }
+
+            guardarProductos();
+            form.reset();
+            renderTabla();
+        };
+
+        window.editarProducto = function(idx) {
+            const prod = productos[idx];
+            form.nombre.value = prod.nombre;
+            form.categoria.value = prod.categoria;
+            form.precio.value = prod.precio;
+            form.stock.value = prod.stock;
+            form.dataset.editando = idx;
+            submitBtn.textContent = 'Actualizar Producto';
+            submitBtn.className = 'submit-btn editing';
+
+            // Scroll al formulario
+            document.querySelector('.form-section').scrollIntoView({
+                behavior: 'smooth'
+            });
+        };
+
+        window.eliminarProducto = function(idx) {
+            if (confirm('¿Seguro que desea eliminar este producto del inventario?')) {
+                productos.splice(idx, 1);
+                guardarProductos();
+                renderTabla();
+            }
+        };
+
+        renderTabla();
+    </script>
+</body>
+</html>

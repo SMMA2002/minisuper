@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Cerrando Sesión - Mini Supermercado</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #2c3e50;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Elementos decorativos de fondo */
+        body::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="%2327ae60" opacity="0.1"/><circle cx="80" cy="40" r="1.5" fill="%232ecc71" opacity="0.1"/><circle cx="40" cy="80" r="1" fill="%2327ae60" opacity="0.1"/><circle cx="60" cy="10" r="1.2" fill="%232ecc71" opacity="0.1"/></svg>') repeat;
+            animation: float 20s infinite linear;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(-50px, -50px) rotate(360deg); }
+        }
+
+        .logout-container {
+            background: white;
+            padding: 50px 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+            border-left: 5px solid #e67e22;
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logout-icon {
+            font-size: 5rem;
+            margin-bottom: 25px;
+            display: block;
+            animation: wave 2s ease-in-out infinite;
+        }
+
+        @keyframes wave {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-10deg); }
+            75% { transform: rotate(10deg); }
+        }
+
+        .logout-title {
+            color: #e67e22;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .logout-message {
+            color: #7f8c8d;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .user-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border-left: 4px solid #27ae60;
+        }
+
+        .user-info::before {
+            content: "👤";
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        .user-info {
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        .session-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            border-left: 3px solid #3498db;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #3498db;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .progress-container {
+            margin-bottom: 30px;
+        }
+
+        .progress-label {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .progress-label::before {
+            content: "⏳";
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #ecf0f1;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #e67e22 0%, #f39c12 100%);
+            width: 0%;
+            border-radius: 4px;
+            animation: fillProgress 5s ease-in-out forwards;
+        }
+
+        @keyframes fillProgress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        .countdown {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #e67e22;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            min-width: 150px;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+        }
+
+        .btn-primary::before {
+            content: "🔑";
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(39, 174, 96, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+            color: white;
+        }
+
+        .btn-secondary::before {
+            content: "🏠";
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(149, 165, 166, 0.3);
+        }
+
+        .security-note {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 25px;
+            font-size: 0.85rem;
+            color: #856404;
+            line-height: 1.4;
+        }
+
+        .security-note::before {
+            content: "🔒";
+            margin-right: 8px;
+        }
+
+        .farewell-message {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .farewell-message::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="1" fill="white" opacity="0.1"/><circle cx="80" cy="40" r="0.8" fill="white" opacity="0.1"/><circle cx="40" cy="80" r="0.6" fill="white" opacity="0.1"/></svg>') repeat;
+            animation: sparkle 15s infinite linear;
+            pointer-events: none;
+        }
+
+        @keyframes sparkle {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(-20px, -20px) rotate(360deg); }
+        }
+
+        .farewell-text {
+            position: relative;
+            z-index: 1;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 480px) {
+            .logout-container {
+                margin: 20px;
+                padding: 40px 25px;
+            }
+
+            .logout-icon {
+                font-size: 4rem;
+            }
+
+            .logout-title {
+                font-size: 2rem;
+            }
+
+            .logout-message {
+                font-size: 1rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .session-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="logout-container">
+        <span class="logout-icon">👋</span>
+        <h1 class="logout-title">¡Hasta Pronto!</h1>
+        <p class="logout-message">Tu sesión se ha cerrado correctamente</p>
+
+        <div class="farewell-message">
+            <div class="farewell-text">
+                Gracias por usar el Sistema de Gestión del Mini Supermercado
+            </div>
+        </div>
+
+        <div class="user-info" id="userInfo">
+            Sesión cerrada exitosamente
+        </div>
+
+        <div class="session-stats" id="sessionStats">
+            <div class="stat-item">
+                <div class="stat-value" id="sessionDuration">--</div>
+                <div class="stat-label">Tiempo Activo</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="loginTime">--</div>
+                <div class="stat-label">Hora de Inicio</div>
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-label">
+                Redirigiendo al inicio de sesión en <span class="countdown" id="countdown">5</span> segundos
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <a href="login.html" class="btn btn-primary">Iniciar Sesión</a>
+            <a href="index.html" class="btn btn-secondary">Ir al Inicio</a>
+        </div>
+
+        <div class="security-note">
+            Por tu seguridad, asegúrate de cerrar completamente el navegador si estás en una computadora compartida.
+        </div>
+    </div>
+
+    <script>
+        // Obtener información de la sesión
+        function getSessionInfo() {
+            const session = localStorage.getItem('userSession');
+            if (session) {
+                const sessionData = JSON.parse(session);
+                const loginTime = new Date(sessionData.loginTime);
+                const now = new Date();
+                const duration = Math.floor((now - loginTime) / (1000 * 60)); // en minutos
+
+                // Mostrar información del usuario
+                document.getElementById('userInfo').innerHTML = `
+                    👤 Usuario: <strong>${sessionData.usuario}</strong> - Sesión cerrada exitosamente
+                `;
+
+                // Mostrar estadísticas de la sesión
+                document.getElementById('sessionDuration').textContent = 
+                    duration < 60 ? `${duration}m` : `${Math.floor(duration/60)}h ${duration%60}m`;
+                
+                document.getElementById('loginTime').textContent = 
+                    loginTime.toLocaleTimeString('es-ES', { 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                    });
+            }
+        }
+
+        // Limpiar sesión
+        function clearSession() {
+            localStorage.removeItem('userSession');
+            sessionStorage.clear();
+            
+            // Limpiar cualquier otro dato de sesión
+            const keysToRemove = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && (key.startsWith('user') || key.startsWith('session') || key.startsWith('auth'))) {
+                    keysToRemove.push(key);
+                }
+            }
+            keysToRemove.forEach(key => localStorage.removeItem(key));
+        }
+
+        // Contador regresivo
+        function startCountdown() {
+            let seconds = 5;
+            const countdownElement = document.getElementById('countdown');
+            
+            const interval = setInterval(() => {
+                seconds--;
+                countdownElement.textContent = seconds;
+                
+                if (seconds <= 0) {
+                    clearInterval(interval);
+                    window.location.href = 'login.html';
+                }
+            }, 1000);
+        }
+
+        // Efectos visuales adicionales
+        function addVisualEffects() {
+            // Efecto de partículas al cargar
+            setTimeout(() => {
+                document.querySelector('.logout-icon').style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    document.querySelector('.logout-icon').style.transform = 'scale(1)';
+                }, 200);
+            }, 500);
+
+            // Cambiar el mensaje después de un tiempo
+            setTimeout(() => {
+                const messages = [
+                    "Esperamos verte pronto de nuevo",
+                    "Tu trabajo ha sido guardado automáticamente",
+                    "Que tengas un excelente día"
+                ];
+                const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+                document.querySelector('.logout-message').textContent = randomMessage;
+            }, 2000);
+        }
+
+        // Prevenir navegación hacia atrás
+        function preventBackNavigation() {
+            history.pushState(null, null, location.href);
+            window.onpopstate = function () {
+                history.go(1);
+            };
+        }
+
+        // Inicializar todo al cargar la página
+        window.addEventListener('load', function() {
+            getSessionInfo();
+            clearSession();
+            startCountdown();
+            addVisualEffects();
+            preventBackNavigation();
+        });
+
+        // Manejar visibilidad de la página
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'visible') {
+                // Si el usuario regresa a la pestaña, redirigir inmediatamente
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1000);
+            }
+        });
+
+        // Limpiar datos al cerrar la ventana
+        window.addEventListener('beforeunload', function() {
+            clearSession();
+        });
+
+        // Atajos de teclado
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                window.location.href = 'login.html';
+            } else if (e.key === 'Escape') {
+                window.location.href = 'index.html';
+            }
+        });
+    </script>
+</body>
+</html>

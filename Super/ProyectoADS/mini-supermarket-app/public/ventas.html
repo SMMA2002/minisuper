@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Ventas - Mini Supermercado</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+        }
+
+        .header {
+            background: #27ae60;
+            color: white;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn::before {
+            content: "←";
+            font-size: 1.2rem;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .left-panel, .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .product-selection, .cart-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border-left: 5px solid #27ae60;
+        }
+
+        .section-title {
+            color: #27ae60;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr auto;
+            gap: 15px;
+            align-items: end;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        select, input {
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: #fafafa;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #27ae60;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            height: fit-content;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(39, 174, 96, 0.3);
+        }
+
+        .cart-header {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cart-header h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .cart-content {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .cart-item {
+            padding: 20px 30px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background 0.3s ease;
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-name {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .item-details {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .item-quantity {
+            background: #ecf0f1;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0 15px;
+        }
+
+        .item-subtotal {
+            font-weight: 700;
+            color: #27ae60;
+            font-size: 1.1rem;
+            margin-right: 15px;
+        }
+
+        .remove-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .remove-btn:hover {
+            background: #c0392b;
+            transform: translateY(-1px);
+        }
+
+        .cart-total {
+            background: #f8f9fa;
+            padding: 25px 30px;
+            border-top: 2px solid #27ae60;
+            text-align: center;
+        }
+
+        .total-label {
+            color: #7f8c8d;
+            font-size: 1rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .total-amount {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #27ae60;
+            margin-bottom: 20px;
+        }
+
+        .checkout-btn {
+            background: linear-gradient(135deg, #e67e22 0%, #f39c12 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .checkout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(230, 126, 34, 0.3);
+        }
+
+        .checkout-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .empty-cart {
+            text-align: center;
+            padding: 60px 30px;
+            color: #7f8c8d;
+        }
+
+        .empty-cart::before {
+            content: "🛒";
+            font-size: 4rem;
+            display: block;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">
+                <h1>Gestión de Ventas</h1>
+            </div>
+            <a href="index.html" class="back-btn">Regresar al Inicio</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="left-panel">
+            <div class="product-selection">
+                <div class="section-title">Agregar Productos</div>
+                <form id="add-product-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="product-select">Seleccionar Producto:</label>
+                            <select id="product-select" required>
+                                <option value="">-- Selecciona un producto --</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="quantity">Cantidad:</label>
+                            <input type="number" id="quantity" min="1" value="1" required>
+                        </div>
+                        <button type="submit" class="add-btn">Agregar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="cart-section">
+                <div class="cart-header">
+                    <h2>Carrito de Compras</h2>
+                </div>
+                <form id="venta-info-form" style="padding: 20px 30px 0 30px;">
+                    <div class="form-group">
+                        <label for="cliente">Nombre del Cliente:</label>
+                        <input type="text" id="cliente" name="cliente" placeholder="Ej: Juan Pérez" required>
+                    </div>
+                    <div class="form-group" style="margin-top:10px;">
+                        <label for="fecha">Fecha de la Venta:</label>
+                        <input type="date" id="fecha" name="fecha" required>
+                    </div>
+                </form>
+                <div class="cart-content" id="cartContent">
+                    <div class="empty-cart">
+                        El carrito está vacío<br>
+                        <small>Agrega productos para comenzar la venta</small>
+                    </div>
+                </div>
+                <div class="cart-total">
+                    <div class="total-label">Total a Pagar</div>
+                    <div class="total-amount" id="total-venta">L0.00</div>
+                    <button id="finalizar-venta" class="checkout-btn" disabled>
+                        Finalizar Venta
+                    </button>
+                </div>
+                <div id="totalVentas" style="margin: 20px 0; font-size: 1.3rem; color: #27ae60; font-weight: bold;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Obtener productos registrados
+        let productosRegistrados = JSON.parse(localStorage.getItem('productos')) || [];
+        productosRegistrados = productosRegistrados.map((prod, idx) => ({
+            id: prod.id || idx + 1,
+            nombre: prod.nombre,
+            precio: parseFloat(prod.precio),
+            categoria: prod.categoria || '',
+            stock: parseInt(prod.stock),
+        }));
+
+        // Carrito de venta
+        const venta = [];
+
+        // Cargar productos en el select
+        function cargarProductos() {
+            const productSelect = document.getElementById('product-select');
+            productSelect.innerHTML = '<option value="">-- Selecciona un producto --</option>';
+            productosRegistrados.forEach(prod => {
+                const option = document.createElement('option');
+                option.value = prod.id;
+                option.textContent = `${prod.nombre} - L${prod.precio.toFixed(2)} (Stock: ${prod.stock})`;
+                option.disabled = prod.stock <= 0;
+                productSelect.appendChild(option);
+            });
+        }
+
+        // Renderizar carrito de venta
+        function renderVenta() {
+            const cartContent = document.getElementById('cartContent');
+            const checkoutBtn = document.getElementById('finalizar-venta');
+            let total = 0;
+            if (venta.length === 0) {
+                cartContent.innerHTML = `
+                    <div class="empty-cart">
+                        El carrito está vacío<br>
+                        <small>Agrega productos para comenzar la venta</small>
+                    </div>
+                `;
+                checkoutBtn.disabled = true;
+                document.getElementById('total-venta').textContent = 'L0.00';
+                return;
+            }
+            let html = '';
+            venta.forEach((item, idx) => {
+                const subtotal = item.precio * item.cantidad;
+                total += subtotal;
+                html += `
+                    <div class="cart-item">
+                        <div class="item-info">
+                            <div class="item-name">${item.nombre}</div>
+                            <div class="item-details">L${item.precio.toFixed(2)} c/u</div>
+                        </div>
+                        <div class="item-quantity">${item.cantidad}</div>
+                        <div class="item-subtotal">L${subtotal.toFixed(2)}</div>
+                        <button class="remove-btn" onclick="eliminarProducto(${idx})">Quitar</button>
+                    </div>
+                `;
+            });
+            cartContent.innerHTML = html;
+            document.getElementById('total-venta').textContent = `L${total.toFixed(2)}`;
+            checkoutBtn.disabled = false;
+        }
+
+        // Eliminar producto del carrito
+        window.eliminarProducto = function(idx) {
+            venta.splice(idx, 1);
+            renderVenta();
+        };
+
+        // Agregar producto al carrito
+        document.getElementById('add-product-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const prodId = parseInt(document.getElementById('product-select').value);
+            const cantidad = parseInt(document.getElementById('quantity').value);
+            if (!prodId || cantidad < 1) return;
+
+            const producto = productosRegistrados.find(p => p.id === prodId);
+            if (!producto || producto.stock < cantidad) {
+                alert('No hay suficiente stock para este producto.');
+                return;
+            }
+            const existente = venta.find(item => item.id === prodId);
+            if (existente) {
+                if (existente.cantidad + cantidad > producto.stock) {
+                    alert('No hay suficiente stock para este producto.');
+                    return;
+                }
+                existente.cantidad += cantidad;
+            } else {
+                venta.push({ ...producto, cantidad });
+            }
+            renderVenta();
+            this.reset();
+            document.getElementById('quantity').value = 1;
+        });
+
+        // Finalizar venta
+        document.getElementById('finalizar-venta').addEventListener('click', function() {
+            if (venta.length === 0) return;
+            const cliente = document.getElementById('cliente').value.trim();
+            const fechaVenta = document.getElementById('fecha').value;
+            if (!cliente || !fechaVenta) {
+                alert('Por favor, ingresa el nombre del cliente y la fecha de la venta.');
+                return;
+            }
+            let total = venta.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
+
+            // Guardar la venta en el historial
+            const historial = JSON.parse(localStorage.getItem('historialVentas')) || [];
+            historial.push({
+                fecha: fechaVenta,
+                cliente: cliente,
+                total: total,
+                productos: venta.map(item => ({
+                    nombre: item.nombre,
+                    cantidad: item.cantidad,
+                    precio: item.precio
+                }))
+            });
+            localStorage.setItem('historialVentas', JSON.stringify(historial));
+
+            // Actualizar stock de productos
+            let productos = JSON.parse(localStorage.getItem('productos')) || [];
+            venta.forEach(item => {
+                const idx = productos.findIndex(p => (p.id ? p.id : productos.indexOf(p) + 1) == item.id);
+                if (idx !== -1) {
+                    productos[idx].stock = Math.max(0, productos[idx].stock - item.cantidad);
+                }
+            });
+            localStorage.setItem('productos', JSON.stringify(productos));
+
+            // Limpiar carrito y campos
+            venta.length = 0;
+            renderVenta();
+            document.getElementById('cliente').value = '';
+            document.getElementById('fecha').value = new Date().toISOString().slice(0,10);
+
+            // Actualizar productos en el select
+            productosRegistrados = productos.map((prod, idx) => ({
+                id: prod.id || idx + 1,
+                nombre: prod.nombre,
+                precio: parseFloat(prod.precio),
+                categoria: prod.categoria || '',
+                stock: parseInt(prod.stock),
+            }));
+            cargarProductos();
+
+            // Actualizar total de ventas
+            mostrarTotalVentas();
+
+            alert('¡Venta finalizada exitosamente!');
+        });
+
+        // Mostrar el total de ventas en la página
+        function mostrarTotalVentas() {
+            const historial = JSON.parse(localStorage.getItem('historialVentas')) || [];
+            const total = historial.reduce((sum, venta) => sum + venta.total, 0);
+            document.getElementById('totalVentas').textContent = `Total de Ventas: L${total.toFixed(2)}`;
+            // Notificar a otras páginas (index, reportes) usando storage event
+            localStorage.setItem('actualizarVentas', Date.now());
+        }
+
+        // Inicializar
+        cargarProductos();
+        renderVenta();
+        mostrarTotalVentas();
+        document.getElementById('fecha').value = new Date().toISOString().slice(0,10);
+
+        // Sincronizar si otra pestaña hace una venta
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'historialVentas' || e.key === 'productos') {
+                cargarProductos();
+                renderVenta();
+                mostrarTotalVentas();
+            }
+        });
+    </script>
+</body>
+</html>

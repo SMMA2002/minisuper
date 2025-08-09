@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Inicio de Sesión - Mini Supermercado</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #2c3e50;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Elementos decorativos de fondo */
+        body::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="%2327ae60" opacity="0.1"/><circle cx="80" cy="40" r="1.5" fill="%232ecc71" opacity="0.1"/><circle cx="40" cy="80" r="1" fill="%2327ae60" opacity="0.1"/><circle cx="60" cy="10" r="1.2" fill="%232ecc71" opacity="0.1"/></svg>') repeat;
+            animation: float 20s infinite linear;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(-50px, -50px) rotate(360deg); }
+        }
+
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 420px;
+            border-left: 5px solid #27ae60;
+            position: relative;
+            z-index: 1;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            display: block;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .login-title {
+            color: #27ae60;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .login-subtitle {
+            color: #7f8c8d;
+            font-size: 1rem;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group label.usuario::before {
+            content: "👤";
+            font-size: 1.1rem;
+        }
+
+        .form-group label.password::before {
+            content: "🔒";
+            font-size: 1.1rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #fafafa;
+            font-family: inherit;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #27ae60;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .form-group input:valid {
+            border-color: #27ae60;
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 15px 20px;
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            text-decoration: none;
+        }
+
+        .login-button::before {
+            content: "🚀";
+            font-size: 1.2rem;
+        }
+
+        .login-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(39, 174, 96, 0.3);
+        }
+
+        .login-button:active {
+            transform: translateY(-1px);
+        }
+
+        .additional-links {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .register-link {
+            color: #27ae60;
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+            padding: 8px 15px;
+            border-radius: 20px;
+        }
+
+        .register-link::before {
+            content: "📝";
+            font-size: 1rem;
+        }
+
+        .register-link:hover {
+            background: rgba(39, 174, 96, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .forgot-password {
+            color: #7f8c8d;
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: block;
+            margin-top: 15px;
+            transition: color 0.3s ease;
+        }
+
+        .forgot-password:hover {
+            color: #27ae60;
+        }
+
+        .security-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid #3498db;
+        }
+
+        .security-info::before {
+            content: "🔐";
+            margin-right: 8px;
+        }
+
+        .security-info {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            line-height: 1.4;
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffffff;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #dc3545;
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .error-message::before {
+            content: "⚠️";
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #28a745;
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .success-message::before {
+            content: "✅";
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                margin: 20px;
+                padding: 30px 25px;
+            }
+
+            .logo-icon {
+                font-size: 3rem;
+            }
+
+            .login-title {
+                font-size: 1.5rem;
+            }
+
+            .form-group input {
+                padding: 12px 15px;
+            }
+
+            .login-button {
+                padding: 12px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo-section">
+            <span class="logo-icon">🛒</span>
+            <h1 class="login-title">Mini Supermercado</h1>
+            <p class="login-subtitle">Sistema de Gestión</p>
+        </div>
+    
+
+        <div class="error-message" id="errorMessage">
+            Credenciales incorrectas. Inténtalo de nuevo.
+        </div>
+
+        <div class="success-message" id="successMessage">
+            ¡Inicio de sesión exitoso! Redirigiendo...
+        </div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="usuario" class="usuario">Usuario</label>
+                <input type="text" id="usuario" name="usuario" required placeholder="Ingresa tu usuario">
+            </div>
+
+            <div class="form-group">
+                <label for="contrasena" class="password">Contraseña</label>
+                <input type="password" id="contrasena" name="contrasena" required placeholder="Ingresa tu contraseña">
+            </div>
+
+            <button type="submit" class="login-button" id="loginButton">
+                <span class="loading-spinner" id="loadingSpinner"></span>
+                <span id="buttonText">Iniciar Sesión</span>
+            </button>
+        </form>
+
+
+    </div>
+
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const loginButton = document.getElementById('loginButton');
+        const buttonText = document.getElementById('buttonText');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const errorMessage = document.getElementById('errorMessage');
+        const successMessage = document.getElementById('successMessage');
+
+        // Credenciales de prueba
+        const validCredentials = {
+            'admin': '123456',
+            'gerente': 'password',
+            'cajero': '123'
+        };
+
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const usuario = document.getElementById('usuario').value.trim();
+            const contrasena = document.getElementById('contrasena').value;
+
+            // Ocultar mensajes previos
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+
+            // Mostrar estado de carga
+            loginButton.disabled = true;
+            loadingSpinner.style.display = 'block';
+            buttonText.textContent = 'Verificando...';
+
+            // Simular verificación (en un caso real sería una llamada al servidor)
+            setTimeout(() => {
+                if (validCredentials[usuario] && validCredentials[usuario] === contrasena) {
+                    // Login exitoso
+                    successMessage.style.display = 'flex';
+                    buttonText.textContent = '¡Éxito!';
+                    
+                    // Guardar sesión (simulado)
+                    localStorage.setItem('userSession', JSON.stringify({
+                        usuario: usuario,
+                        loginTime: new Date().toISOString()
+                    }));
+
+                    // Redirigir después de 2 segundos
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 2000);
+                } else {
+                    // Login fallido
+                    errorMessage.style.display = 'flex';
+                    loginButton.disabled = false;
+                    loadingSpinner.style.display = 'none';
+                    buttonText.textContent = 'Iniciar Sesión';
+                    
+                    // Limpiar campos
+                    document.getElementById('contrasena').value = '';
+                    document.getElementById('usuario').focus();
+                }
+            }, 1500);
+        });
+
+        // Autocompletar credenciales de demo al hacer clic
+        document.querySelector('.demo-credentials').addEventListener('click', function() {
+            document.getElementById('usuario').value = 'admin';
+            document.getElementById('contrasena').value = '123456';
+            document.getElementById('usuario').focus();
+        });
+
+        // Verificar si ya hay una sesión activa
+        window.addEventListener('load', function() {
+            const session = localStorage.getItem('userSession');
+            if (session) {
+                const sessionData = JSON.parse(session);
+                const loginTime = new Date(sessionData.loginTime);
+                const now = new Date();
+                const hoursDiff = (now - loginTime) / (1000 * 60 * 60);
+                
+                // Si la sesión es menor a 24 horas, redirigir automáticamente
+                if (hoursDiff < 24) {
+                    successMessage.style.display = 'flex';
+                    successMessage.innerHTML = '🔄 Sesión activa detectada. Redirigiendo...';
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 2000);
+                }
+            }
+        });
+
+        // Efecto de escritura en el placeholder
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        });
+
+        // Permitir login con Enter
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !loginButton.disabled) {
+                loginForm.dispatchEvent(new Event('submit'));
+            }
+        });
+    </script>
+</body>
+</html>
